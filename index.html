@@ -6,16 +6,16 @@
     <title>Roda da Vida</title>
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 
     <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 
     <!-- html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,6 +60,13 @@
             border-radius: 50%;
             border: 2px solid rgba(75, 61, 42, 0.3);
         }
+        /* Estilo do botão corrigido */
+        #downloadPdfBtn {
+            background-color: #8C5A3A;
+        }
+        #downloadPdfBtn:hover {
+            background-color: #7a4f33;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -72,7 +79,8 @@
         </div>
         <div id="topics-container" class="space-y-4 pr-4 overflow-y-auto max-h-[55vh] min-h-[200px]"></div>
         <div class="mt-2">
-            <button id="downloadPdfBtn" class="w-full text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2" style="background-color: #8C5A3A; hover:background-color: #7a4f33;">
+            <!-- Estilo inline do botão removido para usar a classe CSS -->
+            <button id="downloadPdfBtn" class="w-full text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
                 Baixar Gráfico em PDF
             </button>
         </div>
@@ -287,7 +295,6 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
-
 
 
 
