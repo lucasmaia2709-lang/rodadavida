@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda da Vida</title>
+    <!-- Tailwind CSS para um design moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para criar o gráfico da Roda da Vida -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo para usar a fonte Inter e melhorar a aparência dos controlos de range */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #4a5568; /* cinza-escuro */
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 9999px;
+        }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4299e1; /* azul */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #1a202c;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4299e1; /* azul */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #1a202c;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Coluna de Controlo e Temas -->
+        <div class="flex flex-col space-y-6">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400">Roda da Vida</h1>
+                <p class="text-gray-400 mt-2">Ajuste o seu nível de satisfação de 1 a 10 para cada área da sua vida.</p>
+            </div>
+
+            <!-- Container para os sliders dos temas -->
+            <div id="topics-container" class="space-y-4 pr-4 overflow-y-auto max-h-[60vh] min-h-[200px]">
+                <!-- Os temas e sliders serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Coluna do Gráfico -->
+        <div class="bg-gray-900 rounded-xl p-4 flex items-center justify-center min-h-[300px] lg:min-h-0">
+            <div class="relative w-full h-full aspect-square max-w-lg mx-auto">
+                <canvas id="lifeWheelChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const topicsContainer = document.getElementById('topics-container');
+        const ctx = document.getElementById('lifeWheelChart').getContext('2d');
+
+        // Dados fixos da Roda da Vida
+        let lifeWheelData = {
+            topics: [
+                { name: 'Carreira', value: 7 },
+                { name: 'Finanças', value: 5 },
+                { name: 'Saúde e Bem-Estar', value: 8 },
+                { name: 'Relacionamentos', value: 9 },
+                { name: 'Lazer e Diversão', value: 6 },
+                { name: 'Desenvolvimento Pessoal', value: 7 },
+                { name: 'Família', value: 8 },
+                { name: 'Espiritualidade', value: 5 },
+            ]
+        };
+        
+        // Cores para o gráfico, baseadas no site de referência
+        const chartColors = [
+            'rgba(242, 114, 51, 0.7)',  // Laranja para Carreira
+            'rgba(247, 181, 58, 0.7)',  // Amarelo-laranja para Finanças
+            'rgba(76, 186, 116, 0.7)',   // Verde para Saúde e Bem-Estar
+            'rgba(237, 47, 90, 0.7)',   // Vermelho-rosado para Relacionamentos
+            'rgba(110, 76, 168, 0.7)',  // Roxo para Lazer e Diversão
+            'rgba(0, 130, 196, 0.7)',   // Azul para Desenvolvimento Pessoal
+            'rgba(239, 75, 47, 0.7)',   // Vermelho-laranja para Família
+            'rgba(0, 162, 157, 0.7)',   // Verde-azulado para Espiritualidade
+        ];
+
+        let lifeWheelChart;
+
+        // Função para renderizar os temas e sliders
+        const renderTopics = () => {
+            topicsContainer.innerHTML = '';
+            lifeWheelData.topics.forEach((topic, index) => {
+                const topicElement = document.createElement('div');
+                topicElement.classList.add('bg-gray-700', 'p-4', 'rounded-lg', 'shadow-sm');
+                topicElement.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-semibold text-gray-200">${topic.name}</label>
+                        <span class="text-blue-400 font-bold text-lg w-8 text-center" id="value-${index}">${topic.value}</span>
+                    </div>
+                    <input type="range" min="1" max="10" value="${topic.value}" class="w-full slider" data-index="${index}">
+                `;
+                topicsContainer.appendChild(topicElement);
+            });
+            addEventListenersToControls();
+            updateChart();
+        };
+
+        // Função para atualizar o gráfico
+        const updateChart = () => {
+            const labels = lifeWheelData.topics.map(t => t.name);
+            const data = lifeWheelData.topics.map(t => t.value);
+            
+            const backgroundColors = labels.map((_, i) => chartColors[i % chartColors.length]);
+
+            if (lifeWheelChart) {
+                lifeWheelChart.data.labels = labels;
+                lifeWheelChart.data.datasets[0].data = data;
+                lifeWheelChart.data.datasets[0].backgroundColor = backgroundColors;
+                lifeWheelChart.update();
+            } else {
+                lifeWheelChart = new Chart(ctx, {
+                    type: 'polarArea',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Nível de Satisfação',
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 2,
+                            borderColor: '#1f2937' // Cor do contorno das fatias
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                min: 0,
+                                max: 10,
+                                ticks: {
+                                    stepSize: 2,
+                                    color: 'rgba(255, 255, 255, 0.5)',
+                                    backdropColor: 'transparent',
+                                    font: {
+                                        size: 12,
+                                    }
+                                },
+                                pointLabels: {
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold',
+                                    },
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.2)',
+                                    z: 1 // Garante que as linhas da grelha e os números fiquem acima das áreas coloridas
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false // A legenda já está nos controlos
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        // Função para adicionar listeners aos sliders
+        const addEventListenersToControls = () => {
+            document.querySelectorAll('.slider').forEach(slider => {
+                slider.addEventListener('input', (e) => {
+                    const index = e.target.dataset.index;
+                    const newValue = parseInt(e.target.value);
+                    lifeWheelData.topics[index].value = newValue;
+                    document.getElementById(`value-${index}`).innerText = newValue;
+                    updateChart();
+                });
+            });
+        };
+        
+        // Inicialização
+        renderTopics();
+    </script>
+</body>
+</html>
+
+
+
