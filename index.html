@@ -70,7 +70,7 @@
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-<div class="w-full max-w-6xl rounded-2xl shadow-2xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8" style="background-color: #ffffff;">
+<div class="w-full max-w-7xl rounded-2xl shadow-2xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8" style="background-color: #ffffff;">
     <div class="flex flex-col space-y-6">
         <div>
             <h1 class="text-3xl font-bold" style="color: #212529;">Roda da Vida</h1>
@@ -156,9 +156,9 @@ document.addEventListener("DOMContentLoaded", function(){
                     <input type="range" min="1" max="10" value="${topic.value}" class="w-full slider" data-index="${index}">
                 </div>
                 <div class="flex justify-between items-center text-xs" style="color: #6c757d;">
-                    <span>Muito Baixo</span>
-                    <span id="status-label-${index}" class="font-bold text-center"></span>
-                    <span>Excelente</span>
+                    <span class="text-left">Muito Baixo</span>
+                    <span id="status-label-${index}" class="font-bold text-center flex-grow px-1"></span>
+                    <span class="text-right">Excelente</span>
                 </div>
             `;
             topicsContainer.appendChild(topicElement);
@@ -322,6 +322,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
 
 
 
