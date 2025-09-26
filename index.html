@@ -20,20 +20,20 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #DDAA69; /* Cor de fundo principal alterada */
-            color: #4B3D2A; /* Cor de texto principal alterada */
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F5F1EC; /* Fundo principal com um tom suave de #DDAA69 */
+            color: #212529; /* Cor do texto principal alterada para quase preto */
         }
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
             height: 8px;
-            background: rgba(75, 61, 42, 0.2); /* Fundo do slider alterado */
+            background: #dee2e6; /* Fundo do slider alterado para cinza claro */
             outline: none;
             opacity: 0.7;
             transition: opacity .2s;
@@ -47,45 +47,43 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #8C5A3A; /* Cor do seletor alterada */
+            background: #343a40; /* Cor do seletor alterada para cinza escuro */
             cursor: pointer;
             border-radius: 50%;
-            border: 2px solid rgba(75, 61, 42, 0.3);
+            border: 2px solid rgba(0, 0, 0, 0.1);
         }
         input[type="range"]::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #8C5A3A; /* Cor do seletor alterada */
+            background: #343a40; /* Cor do seletor alterada para cinza escuro */
             cursor: pointer;
             border-radius: 50%;
-            border: 2px solid rgba(75, 61, 42, 0.3);
+            border: 2px solid rgba(0, 0, 0, 0.1);
         }
-        /* Estilo do botão corrigido */
         #downloadPdfBtn {
-            background-color: #8C5A3A;
+            background-color: #343a40; /* Cor do botão alterada para cinza escuro */
         }
         #downloadPdfBtn:hover {
-            background-color: #7a4f33;
+            background-color: #495057;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-<div class="w-full max-w-6xl rounded-2xl shadow-2xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8" style="background-color: #F3E9DA;">
+<div class="w-full max-w-6xl rounded-2xl shadow-2xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8" style="background-color: #ffffff;">
     <div class="flex flex-col space-y-6">
         <div>
-            <h1 class="text-3xl font-bold" style="color: #8C5A3A;">Roda da Vida</h1>
-            <p class="mt-2" style="color: #7E684C;">Ajuste o seu nível de satisfação de 1 a 10 para cada área da sua vida.</p>
+            <h1 class="text-3xl font-bold" style="color: #212529;">Roda da Vida</h1>
+            <p class="mt-2" style="color: #495057;">Ajuste o seu nível de satisfação para cada área da sua vida.</p>
         </div>
-        <div id="topics-container" class="space-y-4 pr-4 overflow-y-auto max-h-[55vh] min-h-[200px]"></div>
+        <div id="topics-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 pr-2 overflow-y-auto max-h-[55vh] min-h-[200px]"></div>
         <div class="mt-2">
-            <!-- Estilo inline do botão removido para usar a classe CSS -->
             <button id="downloadPdfBtn" class="w-full text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
                 Baixar Gráfico em PDF
             </button>
         </div>
     </div>
-    <div id="chart-area" class="rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px] lg:min-h-0" style="background-color: #EADBCB;">
+    <div id="chart-area" class="rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px] lg:min-h-0" style="background-color: #F5F1EC;">
         <div class="relative w-full h-full aspect-square max-w-lg mx-auto">
             <canvas id="lifeWheelChart"></canvas>
         </div>
@@ -100,38 +98,37 @@ document.addEventListener("DOMContentLoaded", function(){
     
     let lifeWheelData = {
         topics: [
-            { name: 'Carreira', value: 7 },
-            { name: 'Finanças', value: 5 },
-            { name: 'Saúde e Bem-Estar', value: 8 },
-            { name: 'Relacionamentos', value: 9 },
-            { name: 'Lazer e Diversão', value: 6 },
-            { name: 'Desenvolvimento Pessoal', value: 7 },
-            { name: 'Família', value: 8 },
-            { name: 'Espiritualidade', value: 5 },
+            { name: 'Carreira', description: 'Satisfação profissional', value: 5 },
+            { name: 'Finanças', description: 'Segurança financeira', value: 5 },
+            { name: 'Saúde e Bem-Estar', description: 'Disposição e vitalidade', value: 5 },
+            { name: 'Relacionamentos', description: 'Círculo social e amoroso', value: 5 },
+            { name: 'Lazer e Diversão', description: 'Hobbies e entretenimento', value: 5 },
+            { name: 'Desenvolvimento', description: 'Crescimento pessoal', value: 5 },
+            { name: 'Família', description: 'Harmonia familiar', value: 5 },
+            { name: 'Espiritualidade', description: 'Paz interior e conexão', value: 5 },
         ]
     };
-    // Paleta de cores do gráfico restaurada para a original
+
     const chartColors = [
-        'rgba(242, 114, 51, 0.8)',
-        'rgba(247, 181, 58, 0.8)',
-        'rgba(76, 186, 116, 0.8)',
-        'rgba(237, 47, 90, 0.8)',
-        'rgba(110, 76, 168, 0.8)',
-        'rgba(0, 130, 196, 0.8)',
-        'rgba(239, 75, 47, 0.8)',
-        'rgba(0, 162, 157, 0.8)',
+        'rgba(242, 114, 51, 0.8)', 'rgba(247, 181, 58, 0.8)', 'rgba(76, 186, 116, 0.8)',
+        'rgba(237, 47, 90, 0.8)', 'rgba(110, 76, 168, 0.8)', 'rgba(0, 130, 196, 0.8)',
+        'rgba(239, 75, 47, 0.8)', 'rgba(0, 162, 157, 0.8)',
     ];
     let lifeWheelChart;
 
-    function getContrastTextColor(rgba) {
-        const rgb = rgba.match(/\d+/g);
-        if (!rgb) return '#FFFFFF'; // Branco como fallback
-        const r = parseInt(rgb[0]);
-        const g = parseInt(rgb[1]);
-        const b = parseInt(rgb[2]);
-        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-        // Se a cor de fundo for escura, o texto será claro. Se for clara, o texto será escuro.
-        return (yiq < 140) ? '#F3E9DA' : '#4B3D2A';
+    function getSatisfactionStatus(value) {
+        if (value <= 2) return { text: 'Muito Insatisfeito', color: '#ef4444' };
+        if (value <= 4) return { text: 'Insatisfeito', color: '#f97316' };
+        if (value <= 6) return { text: 'Neutro', color: '#f59e0b' };
+        if (value <= 8) return { text: 'Satisfeito', color: '#84cc16' };
+        return { text: 'Muito Satisfeito', color: '#22c55e' };
+    }
+    
+    function updateSatisfactionLabel(index, value) {
+        const status = getSatisfactionStatus(value);
+        const statusLabel = document.getElementById(`status-label-${index}`);
+        statusLabel.textContent = status.text;
+        statusLabel.style.color = status.color;
     }
 
     const renderTopics = () => {
@@ -139,20 +136,33 @@ document.addEventListener("DOMContentLoaded", function(){
         lifeWheelData.topics.forEach((topic, index) => {
             const topicElement = document.createElement('div');
             const bgColor = chartColors[index % chartColors.length];
-            const textColor = getContrastTextColor(bgColor);
-
-            topicElement.classList.add('p-4', 'rounded-lg', 'shadow-sm', 'transition-all', 'duration-300');
-            topicElement.style.backgroundColor = bgColor;
-            topicElement.style.color = textColor;
+            
+            topicElement.className = 'p-3 rounded-lg flex flex-col space-y-3';
+            topicElement.style.backgroundColor = '#F5F1EC'; /* Cor de fundo do cartão alterada */
 
             topicElement.innerHTML = `
-                <div class="flex justify-between items-center mb-2">
-                    <label class="font-semibold">${topic.name}</label>
-                    <span class="font-bold text-lg w-8 text-center" id="value-${index}">${topic.value}</span>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-bold text-sm" style="color: #212529;">${topic.name}</h3>
+                        <p class="text-xs" style="color: #6c757d;">${topic.description}</p>
+                    </div>
+                    <div class="w-3 h-3 rounded-sm flex-shrink-0" style="background-color: ${bgColor};"></div>
                 </div>
-                <input type="range" min="1" max="10" value="${topic.value}" class="w-full slider" data-index="${index}">
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1" style="color: #6c757d;">
+                        <span>Avaliação:</span>
+                        <span id="value-display-${index}" class="font-bold text-sm" style="color: #495057;">${topic.value} / 10</span>
+                    </div>
+                    <input type="range" min="1" max="10" value="${topic.value}" class="w-full slider" data-index="${index}">
+                </div>
+                <div class="flex justify-between items-center text-xs" style="color: #6c757d;">
+                    <span>Muito Baixo</span>
+                    <span id="status-label-${index}" class="font-bold text-center"></span>
+                    <span>Excelente</span>
+                </div>
             `;
             topicsContainer.appendChild(topicElement);
+            updateSatisfactionLabel(index, topic.value);
         });
         addEventListenersToControls();
         updateChart();
@@ -178,19 +188,17 @@ document.addEventListener("DOMContentLoaded", function(){
                         data: data,
                         backgroundColor: backgroundColors,
                         borderWidth: 2,
-                        borderColor: '#F3E9DA' // Borda do gráfico a combinar com o painel
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     scales: {
                         r: {
-                            min: 0,
-                            max: 10,
-                            ticks: { stepSize: 2, color: 'rgba(75, 61, 42, 0.5)', backdropColor: 'transparent' }, // Cor dos números da escala
-                            pointLabels: { font: { size: 14, weight: 'bold' }, color: 'rgba(75, 61, 42, 0.8)' }, // Cor dos labels da escala
-                            grid: { color: 'rgba(75, 61, 42, 0.2)', z: 1 } // Cor das linhas da grelha
+                            min: 0, max: 10,
+                            ticks: { stepSize: 2, color: 'rgba(0, 0, 0, 0.4)', backdropColor: 'transparent' },
+                            pointLabels: { font: { size: 14, weight: 'bold' }, color: 'rgba(0, 0, 0, 0.8)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)', z: 1 }
                         }
                     },
                     plugins: { legend: { display: false } }
@@ -205,7 +213,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 const index = e.target.dataset.index;
                 const newValue = parseInt(e.target.value);
                 lifeWheelData.topics[index].value = newValue;
-                document.getElementById(`value-${index}`).innerText = newValue;
+                document.getElementById(`value-display-${index}`).innerText = `${newValue} / 10`;
+                updateSatisfactionLabel(index, newValue);
                 updateChart();
             });
         });
@@ -222,15 +231,15 @@ document.addEventListener("DOMContentLoaded", function(){
         pdfLayout.style.left = '-9999px';
         pdfLayout.style.width = '800px';
         pdfLayout.style.padding = '40px';
-        pdfLayout.style.backgroundColor = '#DDAA69';
-        pdfLayout.style.color = '#4B3D2A';
-        pdfLayout.style.fontFamily = "'Inter', sans-serif";
+        pdfLayout.style.backgroundColor = '#ffffff';
+        pdfLayout.style.color = '#212529';
+        pdfLayout.style.fontFamily = "'Montserrat', sans-serif";
         
         const title = document.createElement('h1');
         title.textContent = 'Roda da Vida';
         title.style.fontSize = '1.875rem';
         title.style.fontWeight = 'bold';
-        title.style.color = '#8C5A3A';
+        title.style.color = '#212529';
         title.style.textAlign = 'center';
         title.style.marginBottom = '1.5rem';
         pdfLayout.appendChild(title);
@@ -243,51 +252,69 @@ document.addEventListener("DOMContentLoaded", function(){
         chartImage.style.display = 'block';
         pdfLayout.appendChild(chartImage);
 
-        const topicsList = document.createElement('div');
+        const topicsGrid = document.createElement('div');
+        topicsGrid.style.display = 'grid';
+        topicsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        topicsGrid.style.gap = '16px';
+
         lifeWheelData.topics.forEach((topic, index) => {
-            const topicItem = document.createElement('div');
+            const topicCard = document.createElement('div');
+            topicCard.style.backgroundColor = '#F5F1EC';
+            topicCard.style.padding = '12px';
+            topicCard.style.borderRadius = '8px';
+            topicCard.style.display = 'flex';
+            topicCard.style.flexDirection = 'column';
+            topicCard.style.justifyContent = 'space-between';
+
+            const satisfaction = getSatisfactionStatus(topic.value);
             const bgColor = chartColors[index % chartColors.length];
-            const textColor = getContrastTextColor(bgColor);
 
-            topicItem.style.backgroundColor = bgColor;
-            topicItem.style.color = textColor;
-            topicItem.style.padding = '8px 12px';
-            topicItem.style.borderRadius = '6px';
-            topicItem.style.marginBottom = '6px';
-            topicItem.style.display = 'flex';
-            topicItem.style.justifyContent = 'space-between';
-            topicItem.style.alignItems = 'center';
-            topicItem.style.fontSize = '0.875rem';
-            topicItem.style.fontWeight = '500';
-
-            const topicName = document.createElement('span');
-            topicName.textContent = topic.name;
-            const topicValue = document.createElement('span');
-            topicValue.textContent = topic.value;
-            topicItem.appendChild(topicName);
-            topicItem.appendChild(topicValue);
-            topicsList.appendChild(topicItem);
+            topicCard.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <h3 style="font-weight: 700; font-size: 14px; color: #212529; margin: 0;">${topic.name}</h3>
+                    <div style="width: 12px; height: 12px; border-radius: 3px; background-color: ${bgColor}; flex-shrink: 0;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                    <span style="font-weight: 700; color: ${satisfaction.color};">${satisfaction.text}</span>
+                    <span style="font-weight: 700; color: #495057;">${topic.value} / 10</span>
+                </div>
+            `;
+            topicsGrid.appendChild(topicCard);
         });
-        pdfLayout.appendChild(topicsList);
+        
+        pdfLayout.appendChild(topicsGrid);
         document.body.appendChild(pdfLayout);
 
-        html2canvas(pdfLayout, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: null
-        }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save('roda-da-vida-resultado.pdf');
-        }).catch(err => {
-            console.error("Ocorreu um erro ao gerar o PDF:", err);
-        }).finally(() => {
-            document.body.removeChild(pdfLayout);
-            downloadButton.textContent = originalButtonText;
-            downloadButton.disabled = false;
-        });
+        html2canvas(pdfLayout, { scale: 3, useCORS: true, backgroundColor: '#ffffff' }) // Aumentei a escala para maior resolução
+            .then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+
+                // Lógica para criar um PDF em formato A4 padrão
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const a4Width = pdf.internal.pageSize.getWidth();
+                const a4Height = pdf.internal.pageSize.getHeight();
+                
+                const canvasAspectRatio = canvas.height / canvas.width;
+                
+                const margin = 15; // Margem de 15mm
+                const imgWidth = a4Width - (margin * 2);
+                const imgHeight = imgWidth * canvasAspectRatio;
+
+                // Centraliza a imagem na página
+                const xPosition = margin;
+                const yPosition = (a4Height - imgHeight) / 2;
+
+                pdf.addImage(imgData, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
+                pdf.save('roda-da-vida-resultado.pdf');
+
+            }).catch(err => {
+                console.error("Ocorreu um erro ao gerar o PDF:", err);
+            }).finally(() => {
+                document.body.removeChild(pdfLayout);
+                downloadButton.textContent = originalButtonText;
+                downloadButton.disabled = false;
+            });
     });
 
     renderTopics();
@@ -295,6 +322,9 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
+
+
 
 
 
